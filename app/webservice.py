@@ -10,6 +10,7 @@ from fastapi import FastAPI, File, Query, UploadFile, applications
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from whisper import tokenizer
 
 ASR_ENGINE = os.getenv("ASR_ENGINE", "openai_whisper")
@@ -21,6 +22,14 @@ else:
 SAMPLE_RATE = 16000
 LANGUAGE_CODES = sorted(tokenizer.LANGUAGES.keys())
 
+origins = [
+    "*",
+    "http://localhost",
+    "https://p5js.org",
+    "https://editor.p5js.org",
+    "https://preview.p5js.org",
+]
+
 projectMetadata = importlib.metadata.metadata("whisper-asr-webservice")
 app = FastAPI(
     title=projectMetadata["Name"].title().replace("-", " "),
@@ -29,6 +38,13 @@ app = FastAPI(
     contact={"url": projectMetadata["Home-page"]},
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     license_info={"name": "MIT License", "url": projectMetadata["License"]},
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 assets_path = os.getcwd() + "/swagger-ui-assets"
