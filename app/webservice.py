@@ -39,6 +39,7 @@ app = FastAPI(
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     license_info={"name": "MIT License", "url": projectMetadata["License"]},
 )
+print("Adding CORS Middleware...")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -46,6 +47,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+print(origins)
 
 assets_path = os.getcwd() + "/swagger-ui-assets"
 if path.exists(assets_path + "/swagger-ui.css") and path.exists(assets_path + "/swagger-ui-bundle.js"):
